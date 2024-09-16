@@ -1,8 +1,8 @@
 #include "matrix_mult.hpp"
 
-#include <iostream>
-#include <stdexcept>
+#include <chrono>
 #include <optional>
+#include <stdexcept>
 #include <thread>
 #include <utility>
 
@@ -91,7 +91,7 @@ void ThreadOperation(const Foo& multipliers,
 
 }  // namespace
 
-SquareMatrix Multiply(const SquareMatrix& matrix1, const SquareMatrix& matrix2, size_t thread_num) {
+std::pair<SquareMatrix, double> Multiply(const SquareMatrix& matrix1, const SquareMatrix& matrix2, size_t thread_num) {
     const auto multipliers_opt = PreprocessMatrixes(matrix1, matrix2);
 
     if (!multipliers_opt.has_value()) {
@@ -105,6 +105,9 @@ SquareMatrix Multiply(const SquareMatrix& matrix1, const SquareMatrix& matrix2, 
     std::vector<std::thread> threads;
 
     threads.reserve(thread_num);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     for (size_t i = 0; i < thread_num; ++i) {
         threads.emplace_back(ThreadOperation, std::ref(multipliers), std::ref(result), i, thread_num);
     }
@@ -113,7 +116,11 @@ SquareMatrix Multiply(const SquareMatrix& matrix1, const SquareMatrix& matrix2, 
         thread.join();
     }
 
-    return result;
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+
+    return {result, elapsed.count()};
 }
 
 
