@@ -1,0 +1,11 @@
+Language: Cpp
+BasedOnStyle: Google
+DerivePointerAlignment: false
+AlignTrailingComments: true
+IndentWidth: 2
+ColumnLimit: 80
+UseTab: Never
+BreakBeforeBraces: Attach
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
